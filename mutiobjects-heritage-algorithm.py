@@ -65,17 +65,31 @@ def roulette(seed):
         b=b+j/cumulation  ##calculate cumculation probablity
         cumulation_probablity.append(b)
     
-    next_seed=[]
+    dad_seed=[]
     for k in range(0,seed_N):
         c=random.random()
         for p in cumulation_probablity:  ## base on random number deciding which seed will be heritaged 
             if c<=p:
-                next_seed.append(seed[cumulation_probablity.index(p)])
+                dad_seed.append(seed[cumulation_probablity.index(p)])
                 break
-                
-    return next_seed
+
+    return dad_seed
+
+def intersect(dad_seed):
+    son_seed=[]
+
+    couple_pick = random.shuffle(list(range(0,seed_N)))  ## geting a order present which two neighbor will be couple
+    
+    for i in range(0,seed_N//2):
+        intersect_point=[]                  ##generate the point that present location of intersection
+        for i in range(variate_amount):
+            intersect_point.append(random.randint(1,bin_N))
+    
 
 
+
+
+    return 0
 
 
 
