@@ -25,16 +25,6 @@ def fitness_func(x1,x2):
 def translate(bin_x,lower_bound,upper_bound,bin_N):                                   
     ##bin_x shall be a string type, input a binary and retrun a decimal number
     fx = lower_bound+int(str(bin_x),2)*(upper_bound-lower_bound)/(2**bin_N-1)
-
-
-def fitness_func(x1,x2):
-    ##x1 and x2 belong to [lower_bound,upper_bound]
-    fx =x1**2+x2**3
-    return fx
-
-def translate(bin_x,lower_bound,upper_bound,bin_N):                                   
-    ##bin_x shall be a string type, input a binary and retrun a decimal number
-    fx = lower_bound+int(str(bin_x),2)*(upper_bound-lower_bound)/(2**bin_N-1)
     return fx
 
 def init_seed(seed_N,variate_amount,variate_bound):                                  
