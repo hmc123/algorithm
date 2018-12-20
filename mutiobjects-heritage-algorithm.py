@@ -4,7 +4,7 @@
 import math
 import random
 
-is_end = False
+
 result = []
 seed_N = int(input("please input init_seed count:"))
 tolerance_N= int(input("please input tolenance number:"))  
@@ -100,6 +100,7 @@ def intersect(dad_seed):
     return son_seed
 
 def end_judge(seed):
+    global result 
     object_values=[]
     x=[]
     for i in seed:
@@ -108,27 +109,18 @@ def end_judge(seed):
             xi.append(translate(i[j],variate_bound[j][0],variate_bound[j][1],variate_bound[j][3]))
             #xi=[translate(i[0],variate_bound[0][0],variate_bound[0][1],variate_bound[0][3]),translate(i[1],variate_bound[1][0],variate_bound[1][1],variate_bound[1][3])]
         x.append(xi)
+
         object_values.append(fitness_func(xi[0],xi[1]))
     result = [object_values,x]
-    
-    temp=0
-    tolerance=-abs(object_values[0])
-    for k in object_values:
-        tolerance = tolerance+abs(k-temp)
-        temp=k
-
-    if tolerance<=1/10**tolerance_N:
-        is_end = True
-    else:
-        is_end = False
     return result
+
 
 
 
 if __name__=='__main__':
     count = 0
     a = init_seed(seed_N,variate_amount,variate_bound)
-    #while is_end == False:
+    
     while count < 1000:
         a = intersect(roulette(a))
         count = count + 1
@@ -136,6 +128,5 @@ if __name__=='__main__':
     
     print('迭代',count,'次得到解')
     for i in range(len(result[0])):
-        for j in variate_amount:
-            print(result[1][i][j],'    ')
-        print(result[0][i])
+        #for j in range(variate_amount):
+        print(result[1][i],'--->',result[0][i])
