@@ -4,6 +4,8 @@
 import math
 import random
 
+is_end = False
+result = []
 seed_N = int(input("please input init_seed count:"))
 tolerance_N= int(input("please input tolenance number:"))  
 variate_amount=int(input("please input how many variate in this calculation ?"))
@@ -43,15 +45,17 @@ def init_seed(seed_N,variate_amount,variate_bound):
 ##轮盘赌
 def roulette(seed):
     ##calculate cumulation probablity of every seed,result will be like this:[]
-    probablity=[]
-    for i in seed:
-        a=fitness_func(translate(i[0],variate_bound[0][0],variate_bound[0][1],variate_bound[0][3]),translate(i[1],variate_bound[1][0],variate_bound[1][1],variate_bound[1][3]))
-        probablity.append(a)
-    
+    # object_values=[]
+    # for i in seed:
+    #     a=fitness_func(translate(i[0],variate_bound[0][0],variate_bound[0][1],variate_bound[0][3]),translate(i[1],variate_bound[1][0],variate_bound[1][1],variate_bound[1][3]))
+    #     object_values.append(a)
+    temp=end_judge(seed)
+    object_values=temp[0]
+
     cumulation_probablity=[]
-    cumulation = sum(probablity) ##calculate the sum of all the fintness
+    cumulation = sum(object_values) ##calculate the sum of all the fintness
     b=0
-    for j in probablity:
+    for j in object_values:
         b=b+j/cumulation  ##calculate cumculation probablity
         cumulation_probablity.append(b)
     
@@ -68,26 +72,70 @@ def roulette(seed):
 def intersect(dad_seed):
     son_seed=[]
 
-    couple_pick = random.shuffle(list(range(0,seed_N)))  ## geting a order present which two neighbor will be couple
+    couple_pick=list(range(0,seed_N))
+    random.shuffle(couple_pick)  ## geting a order present which two neighbor will be couple
     
+               
     for i in range(0,seed_N//2):
-        intersect_point=[]                  ##generate the point that present location of intersection
-        for i in range(variate_amount):
-            intersect_point.append(random.randint(1,bin_N))
+        son_a=[]
+        son_b=[]   
+        for j in range(variate_amount):
+            bin_N = variate_bound[j][3]
+            intersect_point = random.randint(1,bin_N)  ##generate the point that present location of intersection
+            a = dad_seed[couple_pick[2*i]][j][0:intersect_point] + dad_seed[couple_pick[2*i+1]][j][intersect_point:bin_N]
+            b = dad_seed[couple_pick[2*i+1]][j][0:intersect_point] + dad_seed[couple_pick[2*i]][j][intersect_point:bin_N]
+            
+            mutation = random.random()  
+            if mutation<=0.1:
+                x = random.randint(0,bin_N-1)
+                if random.randint(0,1)==1:
+                    a = a[0:x]+str((int(a[x])+1)%2)+a[x+1:bin_N]
+                else:
+                    b = b[0:x]+str((int(b[x])+1)%2)+b[x+1:bin_N]
+                print("变异出现!!!")
+            son_a.append(a)
+            son_b.append(b)            
+        son_seed.append(son_a)
+        son_seed.append(son_b)
+    return son_seed
+
+def end_judge(seed):
+    object_values=[]
+    x=[]
+    for i in seed:
+        xi=[]
+        for j in range(variate_amount):
+            xi.append(translate(i[j],variate_bound[j][0],variate_bound[j][1],variate_bound[j][3]))
+            #xi=[translate(i[0],variate_bound[0][0],variate_bound[0][1],variate_bound[0][3]),translate(i[1],variate_bound[1][0],variate_bound[1][1],variate_bound[1][3])]
+        x.append(xi)
+        object_values.append(fitness_func(xi[0],xi[1]))
+    result = [object_values,x]
     
+    temp=0
+    tolerance=-abs(object_values[0])
+    for k in object_values:
+        tolerance = tolerance+abs(k-temp)
+        temp=k
 
-
-
-
-    return 0
+    if tolerance<=1/10**tolerance_N:
+        is_end = True
+    else:
+        is_end = False
+    return result
 
 
 
 if __name__=='__main__':
-    a=init_seed(seed_N,variate_amount,variate_bound)
-    print(a)
-    print(a.__len__())
-    print('\n*********************')
-    b=roulette(a)
-    print(b)
-    print(b.__len__())
+    count = 0
+    a = init_seed(seed_N,variate_amount,variate_bound)
+    #while is_end == False:
+    while count < 1000:
+        a = intersect(roulette(a))
+        count = count + 1
+        print(count,'\n')
+    
+    print('迭代',count,'次得到解')
+    for i in range(len(result[0])):
+        for j in variate_amount:
+            print(result[1][i][j],'    ')
+        print(result[0][i])
