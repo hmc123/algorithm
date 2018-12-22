@@ -1,5 +1,6 @@
 # muti-genetic-algorithm
 # -*- coding:utf-8 -*-
+#目前只研究非负参数问题
 
 import math
 import random
@@ -19,9 +20,10 @@ for i in range(0,variate_amount):
     variate_bound.append((lower_bound,upper_bound,slice_N,bin_N))
 
 
-def fitness_func(x1,x2):
+def fitness_func(x=[]):
     ##x1 and x2 belong to [lower_bound,upper_bound]
-    fx =x1**2+x2**3
+    #fx =x1**1+x2**2+x3*2
+    fx = pow(x[0],1)+pow(x[1],2)+5*x[2]
     return fx
 
 def translate(bin_x,lower_bound,upper_bound,bin_N):                                   
@@ -100,7 +102,7 @@ def intersect(dad_seed):
     return son_seed
 
 def end_judge(seed):
-    global result 
+    global result       ## set <result> as global object
     object_values=[]
     x=[]
     for i in seed:
@@ -109,8 +111,7 @@ def end_judge(seed):
             xi.append(translate(i[j],variate_bound[j][0],variate_bound[j][1],variate_bound[j][3]))
             #xi=[translate(i[0],variate_bound[0][0],variate_bound[0][1],variate_bound[0][3]),translate(i[1],variate_bound[1][0],variate_bound[1][1],variate_bound[1][3])]
         x.append(xi)
-
-        object_values.append(fitness_func(xi[0],xi[1]))
+        object_values.append(fitness_func(xi))
     result = [object_values,x]
     return result
 
@@ -121,7 +122,7 @@ if __name__=='__main__':
     count = 0
     a = init_seed(seed_N,variate_amount,variate_bound)
     
-    while count < 1000:
+    while count < 2000:
         a = intersect(roulette(a))
         count = count + 1
         print(count,'\n')
